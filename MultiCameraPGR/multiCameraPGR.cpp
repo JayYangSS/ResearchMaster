@@ -1,24 +1,3 @@
-//=============================================================================
-// Copyright ?2008 Point Grey Research, Inc. All Rights Reserved.
-//
-// This software is the confidential and proprietary information of Point
-// Grey Research, Inc. ("Confidential Information").  You shall not
-// disclose such Confidential Information and shall use it only in
-// accordance with the terms of the license agreement you entered into
-// with PGR.
-//
-// PGR MAKES NO REPRESENTATIONS OR WARRANTIES ABOUT THE SUITABILITY OF THE
-// SOFTWARE, EITHER EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE
-// IMPLIED WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR
-// PURPOSE, OR NON-INFRINGEMENT. PGR SHALL NOT BE LIABLE FOR ANY DAMAGES
-// SUFFERED BY LICENSEE AS A RESULT OF USING, MODIFYING OR DISTRIBUTING
-// THIS SOFTWARE OR ITS DERIVATIVES.
-//=============================================================================
-//=============================================================================
-// $Id: MultipleCameraEx.cpp,v 1.17 2010-02-26 01:00:50 soowei Exp $
-//=============================================================================
-
-//#define rotateImage
 
 #include "FlyCapture2.h"
 #include "cv.h"
@@ -267,7 +246,7 @@ IplImage* ConvertImageToOpenCV(Image* pImage)
 }
 //call via: IplImage* myCVImage = SaveImageWithOpenCV(&rawImage);
 
-//Ğı×ªÍ¼ÏñÄÚÈİ²»±ä£¬³ß´çÏàÓ¦±ä´ó
+//æ—‹è½¬å›¾åƒå†…å®¹ä¸å˜ï¼Œå°ºå¯¸ç›¸åº”å˜å¤§
 IplImage* rotateImage2(IplImage* src, int degree, double factor)  
 {  
 	//resize the src image based on the factor************
@@ -285,22 +264,22 @@ IplImage* rotateImage2(IplImage* src, int degree, double factor)
 	double angle = degree  * CV_PI / 180.; 
 	double a = sin(angle), b = cos(angle); 
 	int width=img->width, height=img->height;
-	//Ğı×ªºóµÄĞÂÍ¼³ß´ç
+	//æ—‹è½¬åçš„æ–°å›¾å°ºå¯¸
 	int width_rotate= int(height * fabs(a) + width * fabs(b));  
 	int height_rotate=int(width * fabs(a) + height * fabs(b));  
 	IplImage* img_rotate = cvCreateImage(cvSize(width_rotate, height_rotate), img->depth, img->nChannels);  
 	cvZero(img_rotate);  
-	//±£Ö¤Ô­Í¼¿ÉÒÔÈÎÒâ½Ç¶ÈĞı×ªµÄ×îĞ¡³ß´ç
+	//ä¿è¯åŸå›¾å¯ä»¥ä»»æ„è§’åº¦æ—‹è½¬çš„æœ€å°å°ºå¯¸
 	int tempLength = sqrt((double)width * width + (double)height *height) + 10;  
 	int tempX = (tempLength + 1) / 2 - width / 2;  
 	int tempY = (tempLength + 1) / 2 - height / 2;  
 	IplImage* temp = cvCreateImage(cvSize(tempLength, tempLength), img->depth, img->nChannels);  
 	cvZero(temp);  
-	//½«Ô­Í¼¸´ÖÆµ½ÁÙÊ±Í¼ÏñtmpÖĞĞÄ
+	//å°†åŸå›¾å¤åˆ¶åˆ°ä¸´æ—¶å›¾åƒtmpä¸­å¿ƒ
 	cvSetImageROI(temp, cvRect(tempX, tempY, width, height));  
 	cvCopy(img, temp, NULL);  
 	cvResetImageROI(temp);  
-	//Ğı×ªÊı×émap
+	//æ—‹è½¬æ•°ç»„map
 	// [ m0  m1  m2 ] ===>  [ A11  A12   b1 ]
 	// [ m3  m4  m5 ] ===>  [ A21  A22   b2 ]
 	float m[6];  
@@ -310,7 +289,7 @@ IplImage* rotateImage2(IplImage* src, int degree, double factor)
 	m[1] = a;  
 	m[3] = -m[1];  
 	m[4] = m[0];  
-	// ½«Ğı×ªÖĞĞÄÒÆÖÁÍ¼ÏñÖĞ¼ä  
+	// å°†æ—‹è½¬ä¸­å¿ƒç§»è‡³å›¾åƒä¸­é—´  
 	m[2] = w * 0.5f;  
 	m[5] = h * 0.5f;  
 	CvMat M = cvMat(2, 3, CV_32F, m);  
@@ -479,8 +458,8 @@ int main(int /*argc*/, char** /*argv*/)
 
 				if(!img_save.data) //test if the image is transmitted in
 				{
-					printf("µ÷ÈëÍ¼Æ¬Ê§°ÜÔòÍË³ö");
-					return -1; //µ÷ÈëÍ¼Æ¬Ê§°ÜÔòÍË³ö
+					printf("è°ƒå…¥å›¾ç‰‡å¤±è´¥åˆ™é€€å‡º");
+					return -1; //è°ƒå…¥å›¾ç‰‡å¤±è´¥åˆ™é€€å‡º
 				}
 				if(i == (numCameras-1))
 				{
@@ -568,7 +547,7 @@ int main(int /*argc*/, char** /*argv*/)
 			resize(img, img_to_show, Size(640, 480));
 			if(!img.data) 
 			{
-				printf("µ÷ÈëÍ¼Æ¬Ê§°ÜÔòÍË³ö");
+				printf("è°ƒå…¥å›¾ç‰‡å¤±è´¥åˆ™é€€å‡º");
 				return -1; 
 			}
 							
