@@ -28,7 +28,7 @@ bool write_video = false;//if want to write video, change it to true
 bool shoot = false; //capture one picture
 bool switchCamera = false; //switch the cameras on the dispaly
 bool pause = false;    //press P to pause when capturing the video
-
+//#define rotateImage
 int k = 0;//count the video captured
 
 void handleKey(char key)
