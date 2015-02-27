@@ -52,7 +52,7 @@ const int stateNum = 8;				//x,y,width,height,deta x,deta y,deta width,deta heig
 const int measureNum = 4;			//deta x,deta y,deta width,deta height
 
 
-//Ê¹ÓÃ×Ô¼ºµÄSVMVector 64*128
+//ä½¿ç”¨è‡ªå·±çš„SVMVector 64*128
 vector<float> getThisObjectDetector64(const char* wv)	//input the weight factor
 {
 	static float d_detector[dimension64+1];		//dimension of weight vector;
@@ -80,7 +80,7 @@ vector<float> getThisObjectDetector64(const char* wv)	//input the weight factor
     return vector<float>(d_detector, d_detector + sizeof(d_detector)/sizeof(d_detector[0]));
 }
 
-//Ê¹ÓÃ×Ô¼ºµÄSVMVector 48*96
+//ä½¿ç”¨è‡ªå·±çš„SVMVector 48*96
 vector<float> getThisObjectDetector48(const char* wv)	//input the weight factor
 {
 	static float d_detector[dimension48+1];		//dimension of weight vector;
@@ -344,11 +344,17 @@ vector<float> getThisObjectDetector(int wSize)	//input the weight factor
 		}	
 		cout << "pedestrian vector 96 synchronized successfylly" << endl;
 		return vector<float>(d_detector, d_detector + sizeof(d_detector)/sizeof(d_detector[0]));
-	}	
+	}
+	else
+	{
+		cout << "not effective string, please check again" << endl;
+		system("pause");
+		throw runtime_error(string("cannot detect input traffic sign descriptor"));
+	}
 
 }
 
-// È¥µôvectorÇ°ÃæµÄÊı×ÖºÍ":"
+// å»æ‰vectorå‰é¢çš„æ•°å­—å’Œ":"
 void extractFloat(char* dst, const char* src)
 {
 	for (int i = 0; i<strlen(src); i++)
@@ -365,7 +371,7 @@ void extractFloat(char* dst, const char* src)
 	}
 }
 
-//Ğı×ªÍ¼ÏñÄÚÈİ²»±ä£¬³ß´çÏàÓ¦±ä´ó
+//Image rotate and enlarge
 //Rotate the captured image and enlarge the corresponding img_to_show
 IplImage* rotateImage2(IplImage* src, int degree, double factor)  
 {  
@@ -384,22 +390,22 @@ IplImage* rotateImage2(IplImage* src, int degree, double factor)
 	double angle = degree  * CV_PI / 180.; 
 	double a = sin(angle), b = cos(angle); 
 	int width=img->width, height=img->height;
-	//Ğı×ªºóµÄĞÂÍ¼³ß´ç
+	//æ—‹è½¬åçš„æ–°å›¾å°ºå¯¸
 	int width_rotate= int(height * fabs(a) + width * fabs(b));  
 	int height_rotate=int(width * fabs(a) + height * fabs(b));  
 	IplImage* img_rotate = cvCreateImage(cvSize(width_rotate, height_rotate), img->depth, img->nChannels);  
 	cvZero(img_rotate);  
-	//±£Ö¤Ô­Í¼¿ÉÒÔÈÎÒâ½Ç¶ÈĞı×ªµÄ×îĞ¡³ß´ç
+	//ä¿è¯åŸå›¾å¯ä»¥ä»»æ„è§’åº¦æ—‹è½¬çš„æœ€å°å°ºå¯¸
 	int tempLength = sqrt((double)width * width + (double)height *height) + 10;  
 	int tempX = (tempLength + 1) / 2 - width / 2;  
 	int tempY = (tempLength + 1) / 2 - height / 2;  
 	IplImage* temp = cvCreateImage(cvSize(tempLength, tempLength), img->depth, img->nChannels);  
 	cvZero(temp);  
-	//½«Ô­Í¼¸´ÖÆµ½ÁÙÊ±Í¼ÏñtmpÖĞĞÄ
+	//å°†åŸå›¾å¤åˆ¶åˆ°ä¸´æ—¶å›¾åƒtmpä¸­å¿ƒ
 	cvSetImageROI(temp, cvRect(tempX, tempY, width, height));  
 	cvCopy(img, temp, NULL);  
 	cvResetImageROI(temp);  
-	//Ğı×ªÊı×émap
+	//æ—‹è½¬æ•°ç»„map
 	// [ m0  m1  m2 ] ===>  [ A11  A12   b1 ]
 	// [ m3  m4  m5 ] ===>  [ A21  A22   b2 ]
 	float m[6];  
@@ -409,7 +415,7 @@ IplImage* rotateImage2(IplImage* src, int degree, double factor)
 	m[1] = a;  
 	m[3] = -m[1];  
 	m[4] = m[0];  
-	// ½«Ğı×ªÖĞĞÄÒÆÖÁÍ¼ÏñÖĞ¼ä  
+	// å°†æ—‹è½¬ä¸­å¿ƒç§»è‡³å›¾åƒä¸­é—´  
 	m[2] = w * 0.5f;  
 	m[5] = h * 0.5f;  
 	CvMat M = cvMat(2, 3, CV_32F, m);  
@@ -514,10 +520,10 @@ private:
 	bool showboth;		//show both detecting and tracking results
 	bool firstframe;
 	bool showMeasurementTrajectory;
-
+	
 	string detectionModel;
 	int count;
-
+	
 	bool detectSign;	//if detect trafffic sign
 	int category;
 };
@@ -1049,10 +1055,10 @@ void App::run()
 		if(frames.data == framel.data)
 			throw runtime_error(string("the data for frames and framel are the same"));
 		
-        Mat img_auxs, imgs, img_to_shows; //µÚÒ»¸öÊÓÆµÏà¹Ø short focal length camera
+        Mat img_auxs, imgs, img_to_shows; //ç¬¬ä¸€ä¸ªè§†é¢‘ç›¸å…³ short focal length camera
         gpu::GpuMat gpu_imgs;
 		
-		Mat img_auxl, imgl, img_to_showl; //µÚ¶ş¸öÊÓÆµÏà¹Ø long focal length camera
+		Mat img_auxl, imgl, img_to_showl; //ç¬¬äºŒä¸ªè§†é¢‘ç›¸å…³ long focal length camera
         gpu::GpuMat gpu_imgl;
 
 		Mat img_combine, img_combine_gray;//for the test of combination
